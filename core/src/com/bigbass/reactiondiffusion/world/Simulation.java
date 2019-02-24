@@ -18,7 +18,7 @@ public class Simulation {
 	private float feed = 0.035f;
 	private float kill = 0.062f;
 	
-	private int stepsPerFrame = 2;
+	private int stepsPerFrame = 3;
 	
 	private float adj = 0.2f;
 	private float diag = 0.05f;
@@ -62,14 +62,14 @@ public class Simulation {
 					t.updateColor();
 					
 					if(isRendering){
-						sr.setColor(t.col);
+						//sr.setColor(t.col);
+						sr.setColor(t.red, t.green, t.blue, 1);
 						sr.point(gridActive.pos.x + i, gridActive.pos.y + j, 0);
 					}
 				}
 			}
 			
 			// Copy gridTemp data into gridActive
-			//gridActive.copyFrom(gridTemp);
 			Grid swap = gridActive;
 			gridActive = gridTemp;
 			gridTemp = swap;
