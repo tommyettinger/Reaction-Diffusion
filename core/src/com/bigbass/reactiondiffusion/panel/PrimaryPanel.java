@@ -2,23 +2,18 @@ package com.bigbass.reactiondiffusion.panel;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.bigbass.reactiondiffusion.Main;
-import com.bigbass.reactiondiffusion.skins.SkinManager;
 import com.bigbass.reactiondiffusion.world.Simulation;
 
 public class PrimaryPanel extends Panel {
 
 	private Camera cam;
-	private Stage stage;
+//	private Stage stage;
 	private ShapeRenderer sr;
-	
-	private Label infoLabel;
+//	private BitmapFont arial;
+//	private Label infoLabel;
 	
 	private float scalar = 1;
 	
@@ -30,9 +25,10 @@ public class PrimaryPanel extends Panel {
 		cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cam.position.set(cam.viewportWidth / 2, cam.viewportHeight / 2, 0);
 		cam.update();
-		
-		stage = new Stage();
-		Main.inputMultiplexer.addProcessor(stage);
+//		arial = new BitmapFont();
+//		arial.setColor(Color.WHITE);
+//		stage = new Stage();
+//		Main.inputMultiplexer.addProcessor(stage);
 		Main.inputMultiplexer.addProcessor(new ScrollwheelInputAdapter(){
 			@Override
 			public boolean scrolled(int amount) {
@@ -45,9 +41,9 @@ public class PrimaryPanel extends Panel {
 			}
 		});
 		
-		infoLabel = new Label("", SkinManager.getSkin("fonts/droid-sans-mono.ttf", 10));
-		infoLabel.setColor(Color.WHITE);
-		stage.addActor(infoLabel);
+//		infoLabel = new Label("", SkinManager.getSkin("fonts/droid-sans-mono.ttf", 10));
+//		infoLabel.setColor(Color.WHITE);
+//		stage.addActor(infoLabel);
 		
 		sr = new ShapeRenderer(800 * 600);
 		sr.setAutoShapeType(true);
@@ -57,17 +53,26 @@ public class PrimaryPanel extends Panel {
 	}
 	
 	public void render() {
-		sr.begin(ShapeType.Filled);
-		sr.setColor(Color.BLACK);
-		sr.rect(-(cam.viewportWidth * 0.5f), -(cam.viewportHeight * 0.5f), Gdx.graphics.getWidth() * 2, Gdx.graphics.getHeight() * 2);
-		sr.end();
+//		sr.begin(ShapeType.Filled);
+//		sr.setColor(Color.BLACK);
+//		sr.rect(-(cam.viewportWidth * 0.5f), -(cam.viewportHeight * 0.5f), Gdx.graphics.getWidth() * 2, Gdx.graphics.getHeight() * 2);
+//		sr.end();
 
 		sim.updateAndRender(sr);
 		
-		panelGroup.render();
+//		panelGroup.render();
 		
-		stage.draw();
+//		stage.draw();
 		
+//		Camera camera = stage.getCamera();
+//		camera.update();
+//		Batch batch = stage.getBatch();
+//		batch.setProjectionMatrix(camera.combined);
+//		batch.begin();
+		Gdx.graphics.setTitle("FPS: " + Gdx.graphics.getFramesPerSecond() + ", Gen: " + sim.getGenerations());
+//		arial.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, Gdx.graphics.getHeight() - 24);
+//		arial.draw(batch, "Gen: " + sim.getGenerations(), 10, Gdx.graphics.getHeight() - 38);
+//		batch.end();
 		/*sr.begin(ShapeType.Filled);
 		sr.setColor(Color.FIREBRICK);
 		renderDebug(sr);
@@ -75,17 +80,17 @@ public class PrimaryPanel extends Panel {
 	}
 	
 	public void update(float delta) {
-		panelGroup.update(delta);
+//		panelGroup.update(delta);
 		
-		stage.act(delta);
+//		stage.act(delta);
 		
-		String info = String.format("FPS: %s%nGens: %d",
-				Gdx.graphics.getFramesPerSecond(),
-				sim.getGenerations()
-			);
-		
-		infoLabel.setText(info);
-		infoLabel.setPosition(10, Gdx.graphics.getHeight() - (infoLabel.getPrefHeight() / 2) - 5);
+//		String info = String.format("FPS: %s%nGens: %d",
+//				Gdx.graphics.getFramesPerSecond(),
+//				sim.getGenerations()
+//			);
+//		
+//		infoLabel.setText(info);
+//		infoLabel.setPosition(10, Gdx.graphics.getHeight() - (infoLabel.getPrefHeight() / 2) - 5);
 	}
 	
 	public boolean isActive() {
@@ -93,9 +98,9 @@ public class PrimaryPanel extends Panel {
 	}
 	
 	public void dispose(){
-		stage.dispose();
+//		stage.dispose();
 		sr.dispose();
-		panelGroup.dispose();
+//		panelGroup.dispose();
 		sim.dispose();
 	}
 	

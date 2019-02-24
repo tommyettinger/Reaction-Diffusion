@@ -13,8 +13,8 @@ public class DesktopLauncher {
 		
 		config.resizable = false;
 		
-		config.vSyncEnabled = false;
-		
+		config.vSyncEnabled = true;
+		config.foregroundFPS = 60;
 		config.title = "Reaction Diffusion";
 		
 		new LwjglApplication(new Main(), config);

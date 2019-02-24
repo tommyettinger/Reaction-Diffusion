@@ -1,8 +1,8 @@
 package com.bigbass.reactiondiffusion.world;
 
-import java.util.Random;
-
 import com.badlogic.gdx.math.Vector2;
+
+import java.util.Random;
 
 public class Grid {
 	
@@ -19,6 +19,7 @@ public class Grid {
 		Vector2 tmp = new Vector2(width * 0.5f, height * 0.5f);
 		
 		cells = new Cell[width][height];
+		float d;
 		for(int i = 0; i < width; i++){
 			for(int j = 0; j < height; j++){
 				cells[i][j] = new Cell();
@@ -28,9 +29,9 @@ public class Grid {
 					cells[i][j].b = 1;
 				}*/
 				
-				tmp.set(width * 0.5f, height * 0.5f);
-				if(tmp.dst(i, j) < 3){
-					cells[i][j].b = 1;
+//				tmp.set(width * 0.5f, height * 0.5f);
+				if((d = tmp.dst(i, j)) < 4){
+					cells[i][j].b = 1f / (d + 1f);
 				}
 
 				
