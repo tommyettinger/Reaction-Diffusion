@@ -49,7 +49,7 @@ public class PrimaryPanel extends Panel {
 		infoLabel.setColor(Color.WHITE);
 		stage.addActor(infoLabel);
 		
-		sr = new ShapeRenderer(800 * 600);
+		sr = new ShapeRenderer(512 * 512);
 		sr.setAutoShapeType(true);
 		sr.setProjectionMatrix(cam.combined);
 		

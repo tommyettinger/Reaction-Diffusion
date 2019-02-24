@@ -1,5 +1,8 @@
 package com.bigbass.reactiondiffusion.world;
 
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveAction;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,12 +16,12 @@ public class Simulation {
 	private Grid gridActive;
 	private Grid gridTemp;
 	
-	private float dA = 0.9f;
+	private float dA = 1.0f;
 	private float dB = 0.5f;
-	private float feed = 0.035f;
+	private float feed = 0.0545f;
 	private float kill = 0.062f;
 	
-	private int stepsPerFrame = 3;
+	private int stepsPerFrame = 8; // Decrease if FPS is too low. Controls the number of generations per frame
 	
 	private float adj = 0.2f;
 	private float diag = 0.05f;
@@ -30,6 +33,8 @@ public class Simulation {
 	private SpriteBatch gifBatch;
 	private GifRecorder gifRecorder;
 	
+	private ForkJoinPool pool;
+	
 	public Simulation(){
 		gridActive = new Grid(150, 50, 512, 512);
 		gridTemp = new Grid(150, 50, 512, 512);
@@ -40,29 +45,27 @@ public class Simulation {
 		gifRecorder.setBounds(150 - 400, 50 - 300, 512, 512);
 		gifRecorder.setFPS(40);
 		//gifRecorder.startRecording(); // Remove this to try recording
+		
+		pool = ForkJoinPool.commonPool();
 	}
 	
 	public void updateAndRender(ShapeRenderer sr){
-		isRendering = (Gdx.input.isKeyPressed(Keys.SPACE)/* || generations % 50 == 0*/); // Remove this comment to only record one frame every n generation
+		isRendering = !Gdx.input.isKeyPressed(Keys.SPACE); // Disable rendering by holding SPACE
 		
 		if(isRendering){
 			sr.begin(ShapeType.Line);
 		}
 		for(int z = 0; z < stepsPerFrame; z++){
 			
-			// Reassign all A and B values in gridTemp, using data from gridActive
-			for(int i = 1; i < gridTemp.cells.length - 1; i++){
-				for(int j = 1; j < gridTemp.cells[i].length - 1; j++){
-					Cell c = gridActive.cells[i][j], t = gridTemp.cells[i][j];
-					
-					final float abb = (c.a * c.b * c.b);
-					t.a = c.a + (dA * laplacianA(i, j)) - abb + (feed * (1 - c.a));
-					t.b = c.b + (dB * laplacianB(i, j)) + abb - ((kill + feed) * c.b);
-					
-					t.updateColor();
-					
-					if(isRendering){
-						//sr.setColor(t.col);
+			UpdateWorld wu = new UpdateWorld(gridTemp, gridActive, 1, gridTemp.cells.length - 1, 1, gridTemp.cells[1].length - 1);
+			pool.execute(wu);
+			wu.join();
+			
+			if(isRendering && z == stepsPerFrame - 1){
+				for (int i = 1; i < gridTemp.cells.length - 1; i++) {
+					for (int j = 1; j < gridTemp.cells[i].length; j++) {
+						Cell t = gridTemp.cells[i][j];
+	
 						sr.setColor(t.red, t.green, t.blue, 1);
 						sr.point(gridActive.pos.x + i, gridActive.pos.y + j, 0);
 					}
@@ -79,8 +82,11 @@ public class Simulation {
 		
 		if(isRendering){
 			sr.end();
-			//gifRecorder.setFPS(Gdx.graphics.getFramesPerSecond() < 15 ? 15 : Gdx.graphics.getFramesPerSecond() - 5);
-			gifRecorder.update();
+			
+			if(gifRecorder.isRecording() && generations % 50 < stepsPerFrame){ // record new frame every n generations
+				//gifRecorder.setFPS(Gdx.graphics.getFramesPerSecond() < 15 ? 15 : Gdx.graphics.getFramesPerSecond() - 5);
+				gifRecorder.update();
+			}
 		}
 		
 		if(gifRecorder.isRecording() && Gdx.input.isKeyPressed(Keys.P)){
@@ -109,5 +115,54 @@ public class Simulation {
 		gifRecorder.finishRecording();
 		gifRecorder.close();
 		gifBatch.dispose();
+	}
+	
+	
+	@SuppressWarnings("serial")
+	private class UpdateWorld extends RecursiveAction {
+		private int threshold = 1000;
+		private Grid tmp;
+		private Grid active;
+		private int startx;
+		private int endx;
+		private int starty;
+		private int endy;
+
+		public UpdateWorld(Grid tmp, Grid active, int startx, int endx, int starty, int endy) {
+			this.tmp = tmp;
+			this.active = active;
+			this.startx = startx;
+			this.endx = endx;
+			this.starty = starty;
+			this.endy = endy;
+		}
+
+		public void compute() {
+			int work = (endx - startx) * (endy - starty);
+			if (work > threshold) {
+				int xdiff = (endx - startx) / 2;
+				int ydiff = (endy - starty) / 2;
+
+				UpdateWorld uwA = new UpdateWorld(tmp, active, startx, startx + xdiff, starty, starty + ydiff);
+				UpdateWorld uwB = new UpdateWorld(tmp, active, startx + xdiff, endx, starty, starty + ydiff);
+				UpdateWorld uwC = new UpdateWorld(tmp, active, startx, startx + xdiff, starty + ydiff, endy);
+				UpdateWorld uwD = new UpdateWorld(tmp, active, startx + xdiff, endx, starty + ydiff, endy);
+
+				invokeAll(uwA, uwB, uwC, uwD);
+			} else {
+				for (int i = startx; i < endx; i++) {
+					for (int j = starty; j < endy; j++) {
+						Cell c = active.cells[i][j];
+						Cell t = tmp.cells[i][j];
+
+						final float abb = (c.a * c.b * c.b);
+						t.a = c.a + (dA * laplacianA(i, j)) - abb + (feed * (1 - c.a));
+						t.b = c.b + (dB * laplacianB(i, j)) + abb - ((kill + feed) * c.b);
+
+						t.updateColor();
+					}
+				}
+			}
+		}
 	}
 }
