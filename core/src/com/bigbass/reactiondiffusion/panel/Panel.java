@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Panel {
 
-//	public PanelGroup panelGroup;
+	public PanelGroup panelGroup;
 	public Vector2 pos;
 	public Vector2 dim;
 	
@@ -13,7 +13,7 @@ public class Panel {
 	protected boolean isActive;
 	
 	public Panel(){
-//		panelGroup = new PanelGroup();
+		panelGroup = new PanelGroup();
 		pos = new Vector2(0,0);
 		dim = new Vector2(0,0);
 		isVisible = true;
@@ -27,13 +27,13 @@ public class Panel {
 	}
 	
 	public void renderDebug(ShapeRenderer sr){
-//		if(sr.isDrawing()){
-//			for(Panel panel : panelGroup.panels){
-//				if(panel.isVisible()){
-//					sr.rect(panel.pos.x, panel.pos.y, panel.dim.x, panel.dim.y);
-//				}
-//			}
-//		}
+		if(sr.isDrawing()){
+			for(Panel panel : panelGroup.panels){
+				if(panel.isVisible()){
+					sr.rect(panel.pos.x, panel.pos.y, panel.dim.x, panel.dim.y);
+				}
+			}
+		}
 	}
 	
 	/**

@@ -1,13 +1,13 @@
 package com.bigbass.reactiondiffusion.panel;
 
-import com.badlogic.gdx.utils.Array;
+import java.util.ArrayList;
 
 public class PanelGroup {
 	
-	public Array<Panel> panels;
+	public ArrayList<Panel> panels;
 	
 	public PanelGroup(){
-		panels = new Array<Panel>();
+		panels = new ArrayList<Panel>();
 	}
 	
 	public void render(){
@@ -27,9 +27,9 @@ public class PanelGroup {
 	}
 	
 	public void dispose(){
-		for(int i = panels.size - 1; i >= 0; i--){
+		for(int i = panels.size() - 1; i >= 0; i--){
 			panels.get(i).dispose();
-			panels.removeIndex(i);
+			panels.remove(i);
 		}
 	}
 }
