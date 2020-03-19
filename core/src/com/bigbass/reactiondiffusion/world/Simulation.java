@@ -1,15 +1,14 @@
 package com.bigbass.reactiondiffusion.world;
 
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-
 import io.anuke.gif.GifRecorder;
+
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveAction;
 
 public class Simulation {
 	
@@ -18,7 +17,7 @@ public class Simulation {
 	
 	private float dA = 1.0f;
 	private float dB = 0.5f;
-	private float feed = 0.0545f;
+	private float feed = 0.0375f;
 	private float kill = 0.062f;
 	
 	private int stepsPerFrame = 8; // Decrease if FPS is too low. Controls the number of generations per frame
@@ -41,10 +40,11 @@ public class Simulation {
 		
 		gifBatch = new SpriteBatch();
 		gifRecorder = new GifRecorder(gifBatch);
+		gifRecorder.setGUIDisabled(true);
 		gifRecorder.open();
 		gifRecorder.setBounds(150 - 400, 50 - 300, 512, 512);
-		gifRecorder.setFPS(40);
-		//gifRecorder.startRecording(); // Remove this to try recording
+		gifRecorder.setFPS(30);
+		gifRecorder.startRecording(); // Remove this to try recording
 		
 		pool = ForkJoinPool.commonPool();
 	}
@@ -83,7 +83,7 @@ public class Simulation {
 		if(isRendering){
 			sr.end();
 			
-			if(gifRecorder.isRecording() && generations % 50 < stepsPerFrame){ // record new frame every n generations
+			if(gifRecorder.isRecording() && generations % 10 < stepsPerFrame){ // record new frame every n generations
 				//gifRecorder.setFPS(Gdx.graphics.getFramesPerSecond() < 15 ? 15 : Gdx.graphics.getFramesPerSecond() - 5);
 				gifRecorder.update();
 			}

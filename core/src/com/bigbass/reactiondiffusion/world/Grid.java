@@ -1,12 +1,11 @@
 package com.bigbass.reactiondiffusion.world;
 
-import java.util.Random;
-
+import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
 
 public class Grid {
 	
-	public static final Random RAND = new Random();
+	public static final RandomXS128 RAND = new RandomXS128();
 
 	public Vector2 pos;
 	
@@ -28,8 +27,8 @@ public class Grid {
 				}*/
 				
 				if(i != 0 && j != 0 && i != width - 1 && j != height - 1){
-					if(RAND.nextFloat() <= 0.005f){
-						cells[i][j].b = 1;
+					if((RAND.nextInt() & 0x1FF) < 3){
+						cells[i][j].b = 1 - RAND.nextFloat() * 0.25f;
 					}
 				}
 			}
