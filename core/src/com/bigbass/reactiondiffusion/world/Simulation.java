@@ -158,6 +158,20 @@ public class Simulation {
 						final float abb = (c.a * c.b * c.b);
 						t.a = c.a + (dA * laplacianA(i, j)) - abb + (feed * (1 - c.a));
 						t.b = c.b + (dB * laplacianB(i, j)) + abb - ((kill + feed) * c.b);
+						
+						// Clamp chemical A
+						if(t.a > 1){
+							t.a = 1;
+						} else if(t.a < 0){
+							t.a = 0;
+						}
+						
+						// Clamp chemical B
+						if(t.b > 1){
+							t.b = 1;
+						} else if(t.b < 0){
+							t.b = 0;
+						}
 
 						t.updateColor();
 					}
