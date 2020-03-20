@@ -21,7 +21,7 @@ allprojects {
     version = '1.0'
     ext {
         appName = "Reaction-Diffusion"
-        gdxVersion = '1.9.8'
+        gdxVersion = '1.9.10'
     }
 
     repositories {

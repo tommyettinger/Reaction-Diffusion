@@ -1,11 +1,10 @@
 package com.bigbass.reactiondiffusion.world;
 
-import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
 
 public class Grid {
 	
-	public static final RandomXS128 RAND = new RandomXS128();
+	public static final RandomTangle RAND = new RandomTangle();
 
 	public Vector2 pos;
 	
@@ -17,18 +16,24 @@ public class Grid {
 		//Vector2 tmp = new Vector2(width * 0.5f, height * 0.5f);
 		
 		cells = new Cell[width][height];
-		for(int i = 0; i < width; i++){
-			for(int j = 0; j < height; j++){
+		for(int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
 				cells[i][j] = new Cell();
-				
+			}
+		}
 				/*tmp.set(width * 0.5f, height * 0.5f);
 				if(tmp.dst(i, j) < 3){
 					cells[i][j].b = 1;
 				}*/
-				
+		for(int i = 0; i < width; i++){
+			for(int j = 0; j < height; j++){
 				if(i != 0 && j != 0 && i != width - 1 && j != height - 1){
-					if((RAND.nextInt() & 0x1FF) < 3){
-						cells[i][j].b = 1 - RAND.nextFloat() * 0.25f;
+					if((RAND.nextLong() & 0x3FFL) == 0){
+						cells[i][j].b = cells[width - 1 - i][j].b =
+						cells[i][height - 1 - j].b = cells[width - 1 - i][height - 1 - j].b =
+						cells[j][i].b = cells[width - 1 - j][i].b =
+						cells[j][height - 1 - i].b = cells[width - 1 - j][height - 1 - i].b =
+								1f - (RAND.nextLong() & 0xFFFFFFL) * 0x1p-26f;
 					}
 				}
 			}

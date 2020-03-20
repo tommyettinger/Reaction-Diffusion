@@ -43,7 +43,8 @@ public class Simulation {
 		gifRecorder.setGUIDisabled(true);
 		gifRecorder.open();
 		gifRecorder.setBounds(150 - 400, 50 - 300, 512, 512);
-		gifRecorder.setFPS(30);
+		gifRecorder.setFPS(10);
+		gifRecorder.setSpeedMultiplier(4f);
 		gifRecorder.startRecording(); // Remove this to try recording
 		
 		pool = ForkJoinPool.commonPool();
@@ -83,7 +84,7 @@ public class Simulation {
 		if(isRendering){
 			sr.end();
 			
-			if(gifRecorder.isRecording() && generations % 10 < stepsPerFrame){ // record new frame every n generations
+			if(gifRecorder.isRecording() && generations % (stepsPerFrame + 2) < stepsPerFrame){ // record new frame every n generations
 				//gifRecorder.setFPS(Gdx.graphics.getFramesPerSecond() < 15 ? 15 : Gdx.graphics.getFramesPerSecond() - 5);
 				gifRecorder.update();
 			}
