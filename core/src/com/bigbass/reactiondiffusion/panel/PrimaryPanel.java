@@ -4,9 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.bigbass.reactiondiffusion.Main;
 import com.bigbass.reactiondiffusion.skins.SkinManager;
@@ -23,6 +26,7 @@ public class PrimaryPanel extends Panel {
 	private float scalar = 1;
 	
 	private Simulation sim;
+	private Texture texture;
 	
 	public PrimaryPanel() {
 		super();
@@ -49,10 +53,13 @@ public class PrimaryPanel extends Panel {
 		infoLabel.setColor(Color.WHITE);
 		stage.addActor(infoLabel);
 		
-		sr = new ShapeRenderer(512 * 512);
+		sr = new ShapeRenderer(514 * 514);
 		sr.setAutoShapeType(true);
 		sr.setProjectionMatrix(cam.combined);
-		
+		texture = new Texture(Simulation.SIZE, Simulation.SIZE, Pixmap.Format.RGBA8888);
+		Image image = new Image(texture);
+		image.setPosition(0, 0);
+		stage.addActor(image);
 		sim = new Simulation();
 	}
 	
@@ -61,8 +68,9 @@ public class PrimaryPanel extends Panel {
 		sr.setColor(Color.BLACK);
 		sr.rect(-(cam.viewportWidth * 0.5f), -(cam.viewportHeight * 0.5f), Gdx.graphics.getWidth() * 2, Gdx.graphics.getHeight() * 2);
 		sr.end();
+		sim.updateAndRender();
 
-		sim.updateAndRender(sr);
+		texture.draw(sim.pixmaps.peek(), 0, 0);
 		
 		panelGroup.render();
 		
